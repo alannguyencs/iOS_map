@@ -1,0 +1,61 @@
+GPS - Map
+
+step 1: create a new project
+step 2: Go to Build Phase --> Link Binary With Libraries: add MapKit.framework
+step 3: Go to Info.plist --> Information Property List: add one more property: Privacy - Location When In Use Usage Description, type = String
+step 4: In Main.story board, drag MKMapView to ViewController, display the map in full screen mode.
+
+step 5: Connect MKMapView to ViewController.swift
+@IBOutlet weak var map: MKMapView!
+
+step 6: import libraries: 
+import MapKit
+import CoreLocation
+
+and make class ViewController delegates from CLLocationManagerDelegate
+class ViewController: UIViewController, CLLocationManagerDelegate
+
+step 7: create new variable of CLLocationManager and config basic attributes and functions.
+let manager = CLLocationManager()
+    
+override func viewDidLoad() {
+    super.viewDidLoad()
+    // Do any additional setup after loading the view, typically from a nib.
+    manager.delegate = self
+    manager.desiredAccuracy = kCLLocationAccuracyBest
+    manager.requestWhenInUseAuthorization()
+    manager.startUpdatingLocation()
+
+}
+
+Step 8: write function locationManager() to manage the user location of map:
+- set zoom level
+- deploy longitude and lattitude
+- display user location on map
+
+func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]){
+    let location = locations[0]
+
+    let span:MKCoordinateSpan = MKCoordinateSpanMake(0.01, 0.01)
+    let myLocation:CLLocationCoordinate2D = CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude)
+    let region:MKCoordinateRegion = MKCoordinateRegionMake(myLocation, span)
+    map.setRegion(region, animated: true)
+
+    print (location.speed)
+    print (location.coordinate.longitude)
+
+    self.map.showsUserLocation = true
+}
+
+
+step 9: The simulator (not physical iphone) does not provide the current location of our machine (CityU Campus) but
+display several cases of user movements. To explore this, after launching on simulator, you click on Debug -> Location ->
+- location_mode.
+
+
+step 10: exploit longitude and latitude of user location:
+print (location.coordinate.longitude)
+print (location.coordinate.latitude)
+
+Excersise: Pick the location mode as City Run, based on longitude and latitude of user location, let's display on the screen
+that user are going straight forward, turn left, turn right or stop. 
